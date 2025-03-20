@@ -57,11 +57,10 @@ def transform(vector: dict) -> Tuple[dict, dict, dict]:
 
 if __name__ == "__main__":
     vectors = fetch_vectors("tiny")
-    flag = 0
     for (file, vector) in vectors:
-        flag = 1
         input, pre_state, post_state = transform(vector)
 
         response = requests.post("http://localhost:8000/api/v1/safrole/validate", json={"input": {"block": input, "state": pre_state}, "output": {"state": post_state}, "flags": gen_flags("tiny")})
         result = response.json()
         print("result for", file, result)
+

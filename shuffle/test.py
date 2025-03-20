@@ -5,7 +5,6 @@ import requests
 
 def fetch_vector() :
     test_dir = Path(__file__).parent
-    # Load test vectors
     with open(test_dir / "shuffle_tests.json", "r") as f:
         vectors_json = json.load(f)
 
