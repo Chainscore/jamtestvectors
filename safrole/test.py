@@ -7,7 +7,7 @@ from gen_block import create_dummy_block
 from spec_config import gen_flags
 
 def fetch_vectors(spec: str):
-    # Read the vestors from ./{spec}/{vector_name}.json
+    # Read the vetors from ./{spec}/{vector_name}.json
     result = []
     for file in os.listdir(f"./{spec}"):
         if file.endswith(".json"):
@@ -37,6 +37,15 @@ def transform_state(state: dict) -> dict:
     if "gamma_a" in state:
         state["gamma"]["a"] = state["gamma_a"]
         del state["gamma_a"]
+
+    state["psi"] = {
+        "good": [],
+        "bad": [],
+        "wonky": [],
+        "offenders" : state["post_offenders"]
+    }
+
+
     return state
 
 def transform(vector: dict) -> Tuple[dict, dict, dict]:
@@ -50,9 +59,8 @@ if __name__ == "__main__":
     vectors = fetch_vectors("tiny")
     for (file, vector) in vectors:
         input, pre_state, post_state = transform(vector)
+
         response = requests.post("http://localhost:8000/api/v1/safrole/validate", json={"input": {"block": input, "state": pre_state}, "output": {"state": post_state}, "flags": gen_flags("tiny")})
         result = response.json()
-        if result.status != "ok":
-            print(f"Failed: {file}")
+        print("result for", file, result)
 
-            break
